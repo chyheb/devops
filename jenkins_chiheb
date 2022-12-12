@@ -9,7 +9,7 @@ pipeline{
   environment {
 
         DOCKERHUB_CREDENTIALS = credentials('DockerHubID')
-
+	}
 
         stages{
 			stage('GIT Checkout') {
@@ -84,4 +84,4 @@ pipeline{
                         }  }
          
         }
-}}
+}
