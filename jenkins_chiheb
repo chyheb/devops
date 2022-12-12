@@ -8,7 +8,6 @@ pipeline{
   }
   environment {
 
-        DOCKERHUB_CREDENTIALS = credentials('DockerHubID')
 	}
 
         stages{
@@ -60,28 +59,6 @@ pipeline{
                 }
             }
 			
-			stage('Docker login') {
-
-                                         steps {
-                                          echo 'login to DockerHub'
-                   	sh "docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW"
-                               }  }
 			
-	     stage('Build docker image'){
-                             steps{
-							 echo 'Build docker image'
-                             
-                                    sh "docker build -t $DOCKERHUB_CREDENTIALS_USR/springprojet ."
-                             
-                             }
-                         }
-	     
-		 stage('Docker push image') {
-
-                 steps {
-                      echo 'Push DOcker Image'
-                     	sh "docker push $DOCKERHUB_CREDENTIALS_USR/springprojet"
-                        }  }
-         
         }
 }
