@@ -16,7 +16,7 @@ pipeline{
 				steps {
                 echo 'Pulling code from Git'
                 git branch: 'main', 
-                url: 'https://github.com/chyheb/devops'
+                url: 'https://github.com/chyheb/devops.git'
 				}
 			}
 
