@@ -12,31 +12,29 @@ pipeline{
 
 
         stages{
+			stage('GIT Checkout') {
+				steps {
+                echo 'Pulling code from Git'
+                git branch: 'main', 
+                url: 'https://github.com/chyheb/devops'
+				}
+			}
 
-            stage('Cleaning the project') {
-                 steps{
-                    sh "mvn -B -DskipTests clean  "
-                    }
-                }
-
-
-	        stage('Build') {
-      		    steps {
-        		sh 'mvn -B -DskipTests clean package'
-      		          }
-            	}
+             stage('Building JAR') {
+            steps {
+                echo 'Building with Maven'
+                sh 'mvn clean install -DskipTests'
+				}
+			}
             stage('JUnit/Mockito'){
                 steps {
-		script{
-                sh '''mvn -version
-                mvn -B -DskipTests clean package'''
-
-                echo """Bravo! tous les tests sont pris en charge"""
-                }}
+                echo 'Testing Facture Services'
+                sh 'mvn test'
             }
-            stage("SonarQube Analysis") {
+            }
+            stage("SonarQube") {
                        steps {
-
+						echo 'SonarQube'
                          withSonarQubeEnv('sonar') {
                            sh 'mvn clean -DskipTests package sonar:sonar'
                          }
@@ -61,29 +59,29 @@ pipeline{
                         version: 'pom.1.0'
                 }
             }
-	     stage('Build docker image'){
-                             steps{
-                                 script{
-                                    sh 'docker build -t $DOCKERHUB_CREDENTIALS_USR/springprojet .'
-                                 }
-                             }
-                         }
-	     stage('Docker login') {
+			
+			stage('Docker login') {
 
                                          steps {
-                                          sh 'echo "login Docker ...."'
-                   	sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
+                                          echo 'login to DockerHub'
+                   	sh "docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW"
                                }  }
-		 stage('Docker push') {
+			
+	     stage('Build docker image'){
+                             steps{
+							 echo 'Build docker image'
+                             
+                                    sh "docker build -t $DOCKERHUB_CREDENTIALS_USR/springprojet ."
+                             
+                             }
+                         }
+	     
+		 stage('Docker push image') {
 
                  steps {
-                      sh 'echo "Docker is pushing ...."'
-                     	sh 'docker push $DOCKERHUB_CREDENTIALS_USR/springprojet'
+                      echo 'Push DOcker Image'
+                     	sh "docker push $DOCKERHUB_CREDENTIALS_USR/springprojet"
                         }  }
-         stage('Docker compose') {
-
-                          steps {
-                               sh 'docker-compose up -d'
-                                 }  }
+         
         }
 }
