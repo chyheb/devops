@@ -56,8 +56,6 @@ pipeline{
                         protocol: 'http',
                         repository: 'simpleapp-release',
                         version: 'pom.1.0'
-                }
-            }
-			
-			
+                } }
+	}			
 }
